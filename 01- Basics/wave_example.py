@@ -21,11 +21,11 @@ print("frame rate", obj.getnchannels())
 print("number of frames", obj.getnframes())
 print("parameters", obj.getparams())
 
-t_audio = obj.getnframes()/ obj.getframerate()
+t_audio = obj.getnframes() / obj.getframerate()
 
 print(t_audio)
 
-frames = obj.readframes(-1)  #will read all frames
+frames = obj.readframes(-1)  # will read all frames
 print(type(frames), type(frames[0]))
 print(len(frames)/2)
 
