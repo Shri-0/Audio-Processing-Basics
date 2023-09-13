@@ -50,20 +50,34 @@ print(transc_id)
 
 # poll
 def poll(transc_id):
-	polling_endpoint = endpoint + '/' + transc_id
-	polling_response = requests.get(polling_endpoint, headers=headers)
-	return polling_response.json()
+    polling_endpoint = endpoint + '/' + transc_id
+    polling_response = requests.get(polling_endpoint, headers=headers)
+    return polling_response.json()
 
 
-def get_transcription_url():
-    transcript_id = transcribe()
+def get_transcription_url(audio_url):
+    transcript_id = transcribe(audio_url)
     while True:
         data = poll(transcript_id)
         if data['status'] == 'completed':
-         return data, None
+            return data, None
         elif data['status'] == 'error':
-         return data, "error"
+            return data, data['error']
 
+
+audio_url = upload(filename)
+
+
+def save_transcript(audio_url):
+    data, error = get_transcription_url(audio_url)
+
+    if data:
+        text_filename = filename + ".txt"
+        with open(text_filename, "w") as f:
+            f.write(data['text'])
+        print('Transcription saved!!')
+    elif error:
+        print("error", error)
 
 
 
