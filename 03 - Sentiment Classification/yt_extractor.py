@@ -17,11 +17,12 @@ def get_video_infos(url):
 
 def get_audio_url(video_info):
     for f in video_info["formats"]:
-        print(f["ext"])  # , f["url"])
+        if f["ext"] == "m4a":
+            return f["url"]  # , f["url"])
 
 
 if __name__ == "__main__":
     video_info = get_video_infos(
         "https://www.youtube.com/watch?v=e-kSGNzu0hM&ab_channel=Tom%E2%80%99sGuide")
-    audio_url = get_audio_url(video_info)
-    print(audio_url)
+    url = get_audio_url(video_info)
+    print(url)

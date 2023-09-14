@@ -1,6 +1,7 @@
 
 import requests
 from api_secrets import API_KEY_ASSEMBLYAI
+import json
 import time
 
 
@@ -22,19 +23,20 @@ def upload(filename):
                                 headers=headers,
                                 data=read_file(filename))
 
-    audio_url = up_response.json()['upload_url']
-    return audio_url
+    return up_response.json()['upload_url']
+    # return audio_url
 
 
 # start transcribing
     # audio_url = response.json()['upload_url']
 
-def transcribe(audio_url):
-    transcript_request = {"audio_url": audio_url}
+def transcribe(audio_url, sentiment_analysis):
+    transcript_request = {"audio_url": audio_url,
+                          "sentiment_analysis": sentiment_analysis}
     transcript_response = requests.post(
         endpoint, json=transcript_request, headers=headers)
-    job_id = transcript_response.json()['id']
-    return job_id
+    return transcript_response.json()['id']
+    # return job_id
 
 
 # audio_url = upload(filename)
@@ -52,8 +54,8 @@ def poll(transc_id):
     return polling_response.json()
 
 
-def get_transcription_url(audio_url):
-    transcript_id = transcribe(audio_url)
+def get_transcription_url(url, sentiment_analysis):
+    transcript_id = transcribe(url, sentiment_analysis)
     while True:
         data = poll(transcript_id)
         if data['status'] == 'completed':
@@ -64,13 +66,21 @@ def get_transcription_url(audio_url):
         time.sleep(30)
 
 
-def save_transcript(audio_url, filename):
-    data, error = get_transcription_url(audio_url)
+def save_transcript(url, title, sentiment_analysis=False):
+    data, error = get_transcription_url(url, sentiment_analysis)
 
     if data:
-        text_filename = filename + ".txt"
+        text_filename = title + ".txt"
         with open(text_filename, "w") as f:
             f.write(data['text'])
+
+        if sentiment_analysis:
+            text_filename = title + "_sentiments.json"
+            with open(text_filename, "w") as f:
+                sentiments = data["sentiment_analysis_results"]
+                json.dump(sentiments, f, indent=4)
         print('Transcription saved!!')
+        return True
     elif error:
         print("error", error)
+        return False
