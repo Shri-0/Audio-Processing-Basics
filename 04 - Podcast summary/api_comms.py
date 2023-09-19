@@ -12,6 +12,20 @@ endpoint = "https://api.assemblyai.com/v2/transcript"
 listennotes_episode_endpoint = "https://listen-api.listennotes.com/api/v2/episodes"
 listennotes_headers = {'X-ListenAPI-Key': API_KEY_LISTENNOTES}
 
+def get_episode_audio_url(episode_id):
+    url = listennotes_episode_endpoint + '/' + episode_id
+    response = requests.request('GET', url, headers=listennotes_headers)
+
+    data = response.json()
+    print(data)
+
+
+
+
+
+
+
+
 # 96d84944f2744f96ac33357653e5f68e
 
 # start transcribing
