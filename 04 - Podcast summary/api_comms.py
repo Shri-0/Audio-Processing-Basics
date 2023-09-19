@@ -1,34 +1,21 @@
 
 import requests
 from api_secrets import API_KEY_ASSEMBLYAI
+from api_secrets import API_KEY_LISTENNOTES
 import json
 import time
 
 
 headers = {'authorization': API_KEY_ASSEMBLYAI}
-upload_endp = "https://api.assemblyai.com/v2/upload"
 endpoint = "https://api.assemblyai.com/v2/transcript"
 
+listennotes_episode_endpoint = "https://listen-api.listennotes.com/api/v2/episodes"
+listennotes_headers = {'X-ListenAPI-Key': API_KEY_LISTENNOTES}
 
-def upload(filename):
-    def read_file(filename, chunk_size=5242880):
-        with open(filename, 'rb') as _file:
-            while True:
-                data = _file.read(chunk_size)
-                if not data:
-                    break
-                yield data
-
-    up_response = requests.post(upload_endp,
-                                headers=headers,
-                                data=read_file(filename))
-
-    return up_response.json()['upload_url']
-    # return audio_url
-
+# 96d84944f2744f96ac33357653e5f68e
 
 # start transcribing
-    # audio_url = response.json()['upload_url']
+# audio_url = response.json()['upload_url']
 
 def transcribe(audio_url, sentiment_analysis):
     transcript_request = {"audio_url": audio_url,
