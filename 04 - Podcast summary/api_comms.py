@@ -83,17 +83,22 @@ def save_transcript(episode_id):
 # 1:24:23 - This works so far
 
     if data:
-        #text_filename = title + ".txt"
-        #with open(text_filename, "w") as f:
-         #   f.write(data['text'])
+        text_filename = episode_id + ".txt"
+        with open(text_filename, "w") as f:
+            f.write(data['text'])
 
-        if auto_chapters:
-            text_filename = title + "_sentiments.json"
-            with open(text_filename, "w") as f:
-                sentiments = data["sentiment_analysis_results"]
-                json.dump(sentiments, f, indent=4)
-        print('Transcription saved!!')
-        return True
+        chapters_filename = episode_id + '_chapters.json'
+        with open(chapters_filename, 'w') as f:
+            chapters = data['chapters']
+
+            episode_data = {'chapters': chapters}
+            episode_data['episode_thumbnail'] = episode_thumbnail
+            episode_data['episode_title'] = episode_title
+            episode_data['podcast_title'] = podcast_title
+
+            json.dump(episode_data, f)
+            print('transcript saved')
+
     elif error:
-        print("error", error)
+        print("error!")
         return False
