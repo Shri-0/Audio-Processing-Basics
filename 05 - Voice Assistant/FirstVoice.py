@@ -38,13 +38,46 @@ async def send_recieve():
 
         async def send():
             while True:
-                print("sending")
+                try:
+                    data = stream.read(FRAMES_PER_BUFFER,
+                                       exception_on_overflow=False)
+                    data = base64.b64encode(data).decode("utf-8")
+                    json_data = json.dumps({"audio_data": data})
+                    await _ws.send(json_data)
+                except websockets.exceptions.ConnectionClosedError as e:
+                    print(e)
+                    assert e.code == 4008
+                    break
+                except Exception as e:
+                    assert False, "Not a websocket 4008 error"
+                await asyncio.sleep(0.01)
+
+                # print("sending")
 
         async def recieve():
             while True:
-                pass
+                try:
+                    result_str = await _ws.recv()
+                    result = json.loads(result_str)
+                    prompt = result["text"]
+                    if prompt and result["message_type"] == "FinalTranscript":
 
-        send_result, recieve_result = asyncio.gather(send(), recieve())
+                        print("Me:", prompt)
+                        print("Bot:", "this is my answer")
+
+                    # data = stream.read(FRAMES_PER_BUFFER,
+                    #                   exception_on_overflow=False)
+                    # data = base64.b64encode(data).decode("utf-8")
+                    # json_data = json.dumps({"audio_data": data})
+                    # await _ws.send(json_data)
+                except websockets.exceptions.ConnectionClosedError as e:
+                    print(e)
+                    assert e.code == 4008
+                    break
+                except Exception as e:
+                    assert False, "Not a websocket 4008 error"
+
+        send_result, recieve_result = await asyncio.gather(send(), recieve())
 
 
 asyncio.run(send_recieve())
