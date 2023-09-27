@@ -4,6 +4,7 @@ import asyncio
 import base64
 import json
 from api_secrets import API_KEY_ASSEMBLYAI
+from openai_helper import ask_computer
 
 
 FRAMES_PER_BUFFER = 3200
@@ -63,7 +64,8 @@ async def send_recieve():
                     if prompt and result["message_type"] == "FinalTranscript":
 
                         print("Me:", prompt)
-                        print("Bot:", "this is my answer")
+                        response = ask_computer(prompt)
+                        print("Bot:", response)
 
                     # data = stream.read(FRAMES_PER_BUFFER,
                     #                   exception_on_overflow=False)
