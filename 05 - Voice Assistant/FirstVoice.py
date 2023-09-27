@@ -47,4 +47,4 @@ async def send_recieve():
         send_result, recieve_result = asyncio.gather(send(), recieve())
 
 
-asyncio.run(send_recieve)
+asyncio.run(send_recieve())
